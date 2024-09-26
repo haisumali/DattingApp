@@ -1,18 +1,10 @@
-using API.Data; // Assuming your namespace for DataContext
-using Microsoft.EntityFrameworkCore;
+using API.Extentions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 
-// Configure DbContext with SQLite
-builder.Services.AddDbContext<DataContext>(opt =>
-{
-    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
-// Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
@@ -23,18 +15,30 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Optional: Add logging
+builder.Services.AddLogging();
+
 var app = builder.Build();
 
 // Enable routing
 app.UseRouting();
+
+// Enable developer exception page in development
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
 
 // Apply CORS policy
 app.UseCors("AllowSpecificOrigin");
 
 // Enable authorization if needed
 app.UseAuthorization();
-
+app.UseAuthorization();
 // Map controllers
 app.MapControllers();
+
+// Optional: Add error handling
+app.UseExceptionHandler("/error"); // Custom error handling endpoint
 
 app.Run();

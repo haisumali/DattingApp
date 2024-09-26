@@ -1,4 +1,5 @@
 using System;
+using API.Controllers;
 using API.Data;
 using API.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -8,11 +9,8 @@ using SQLitePCL;
 
 namespace API.Controller;
 
-[ApiController]
-[Route("api/{controller}")]// controller ka name single rehna chaiye
- // api/users
 
-public class UsersController(DataContext context) : ControllerBase //UserController ka name singluar hona chaiye plural nhi
+public class UsersController(DataContext context) : BaseApiController //UserController ka name singluar hona chaiye plural nhi
 {
 
 
