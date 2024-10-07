@@ -1,7 +1,10 @@
 import { NgFor } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, input, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { NavComponent } from "./nav/nav.component";
+import { AccountService } from './_service/account.service';
+import { ThisReceiver } from '@angular/compiler';
+import { HomeComponent } from "./home/home.component";
 
 interface User {
   id: number;
@@ -11,23 +14,25 @@ interface User {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgFor],
+  imports: [RouterOutlet, NgFor, NavComponent, HomeComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  http = inject(HttpClient);
-  title = 'DatingApp';
-  users: User[] = []; // Define users as an array of User type
+  private accountService = inject(AccountService);
+  @Input() usersFromHomeComponent:any;  
 
   ngOnInit(): void {
-    this.http.get<User[]>('http://localhost:5001/api/users').subscribe({
-      next: response => {
-        this.users = response;
-        console.log(this.users);  // Check if users are being fetched
-      },
-      error: error => console.error('Error fetching users', error),
-      complete: () => console.log('Request has completed')
-    });
+ 
+    this.setCurrentUser();
   }
-}
+
+  setCurrentUser(){
+    const useString = localStorage.getItem('user');
+    if(!useString) return;
+    const user = JSON.parse(useString);
+    this.accountService.currentUser.set(user);
+  }
+
+  
+  }

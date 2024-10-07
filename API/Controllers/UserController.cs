@@ -1,38 +1,36 @@
-using System;
-using API.Controllers;
+using Microsoft.AspNetCore.Mvc; // Ensure you have this using directive
 using API.Data;
 using API.Entities;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using SQLitePCL;
 
-namespace API.Controller;
-
-
-public class UsersController(DataContext context) : BaseApiController //UserController ka name singluar hona chaiye plural nhi
+namespace API.Controllers // Note: Ensure the namespace is plural
 {
-
-
-    [HttpGet]
-    // api/users
-    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UsersController : ControllerBase // Fix the inheritance
     {
-        var users = await context.Users.ToListAsync();
+        private readonly DataContext _context; // Store the context
 
+        public UsersController(DataContext context) // Correct constructor syntax
+        {
+            _context = context;
+        }
 
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        {
+            var users = await _context.Users.ToListAsync(); // Use the stored context
+            return Ok(users); // Return Ok response
+        }
 
-        return users;
-    }
-
-// api/users/5
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<AppUser>> GetUser(int id)
-    {
-        var user = await context.Users.FindAsync(id);
-
-        if (user == null) return NotFound();
-
-        return user;
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<AppUser>> GetUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+            return Ok(user); // Return Ok response
+        }
     }
 }
