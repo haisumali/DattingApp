@@ -1,4 +1,5 @@
 using API.Extentions;
+using API.MiddleWare;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,8 @@ builder.Services.AddLogging();
 
 var app = builder.Build();
 
+
+app.UseMiddleware<ExceptionMiddleWare>();
 // Enable routing
 app.UseRouting();
 

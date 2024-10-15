@@ -19,12 +19,13 @@
           <li>
             <a routerLink="/messages"routerLinkActive="active"   class="nav-link ">Messages</a>
           </li>
-          <li>
-            <a class="nav-link"(click)="logout()">Logout</a>
-          </li>
         }
-        </ul>
+        <li class="nav-item">
+          <a routerLink="/errors" routerLinkActive="active" class="nav-link">Error</a>
+        </li>
+      </ul>
         
+      
 
        @if (accountService.currentUser()) {
         <div dropdown class="dropdown">
